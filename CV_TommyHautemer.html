@@ -20,80 +20,84 @@
     --tag-bg:        #f3f4f6;
     --tag-color:     #374151;
     --font:          'Inter', system-ui, -apple-system, sans-serif;
-    --page-width:    860px;
   }
 
-  html { font-size: 15px; }
+  html { font-size: 12px; }
 
-  body {
+  html, body {
     font-family: var(--font);
     color: var(--text-primary);
-    background: #f1f5f9;
+    background: #e2e8f0;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ===== PAGE SHELL ===== */
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0 40px;
+  }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar {
+    width: 794px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
   .page {
-    max-width: var(--page-width);
-    margin: 2rem auto;
+    width: 794px;
+    height: 1123px;
     background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0,0,0,.07);
+    box-shadow: 0 4px 24px rgba(0,0,0,.12);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== IMPRESSION ===== */
+  @page {
+    size: A4 portrait;
+    margin: 0;
   }
 
   @media print {
-    @page {
-      size: A4 portrait;
-      margin: 0;
-    }
-    html {
-      font-size: 11.4px;
-    }
-    body {
-      width: 210mm;
+    html, body {
       background: white;
+      padding: 0;
       margin: 0;
-      padding: 1cm 1.2cm;
+      display: block;
+    }
+    .toolbar { display: none !important; }
+    .page {
+      width: 210mm;
+      height: 297mm;
+      box-shadow: none;
+      border-radius: 0;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    .page {
-      width: 100%;
-      max-width: 100%;
-      margin: 0;
-      border: none;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    .toolbar { display: none !important; }
-    .header  { padding: 1.4rem 1.8rem 1.4rem; }
-    .col-main { padding: 1.4rem 1.6rem 1.4rem 1.8rem; }
-    .col-side  { padding: 1.4rem 1.6rem 1.4rem 1.4rem; }
-    .section   { margin-bottom: 1.4rem; }
-    .exp-item  { margin-bottom: 1.1rem; padding-bottom: 1.1rem; }
-    .proj-item { margin-bottom: 0.9rem; padding-bottom: 0.9rem; }
-    .skill-group { margin-bottom: 0.85rem; }
-    .edu-item  { margin-bottom: 0.8rem; }
   }
 
   /* ===== HEADER ===== */
   .header {
-    padding: 2rem 2.4rem 1.6rem;
+    padding: 1.5rem 2rem 1.3rem;
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 1rem;
-    flex-wrap: wrap;
+    flex-shrink: 0;
   }
 
   .header-left { flex: 1; min-width: 240px; }
 
   .name {
-    font-size: 1.9rem;
+    font-size: 1.75rem;
     font-weight: 700;
     letter-spacing: -0.5px;
     color: var(--text-primary);
@@ -101,7 +105,7 @@
   }
 
   .job-title {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     color: var(--accent);
     font-weight: 600;
     margin-top: 4px;
@@ -110,30 +114,28 @@
   }
 
   .tagline {
-    font-size: 0.83rem;
+    font-size: 0.77rem;
     color: var(--text-secondary);
-    margin-top: 10px;
+    margin-top: 8px;
     max-width: 480px;
-    line-height: 1.6;
+    line-height: 1.55;
   }
 
   .badge-dispo {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: #065f46;
     background: #d1fae5;
-    padding: 4px 10px;
+    padding: 3px 9px;
     border-radius: 20px;
-    margin-top: 12px;
+    margin-top: 10px;
   }
-
   .badge-dispo::before {
     content: '';
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: #10b981;
     display: inline-block;
@@ -142,55 +144,66 @@
   .header-right {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
     align-items: flex-end;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    flex-shrink: 0;
   }
 
   .contact-item {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     color: var(--text-secondary);
   }
-
-  .contact-item svg {
-    color: var(--text-muted);
-    flex-shrink: 0;
+  .contact-item a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color .15s;
   }
+  .contact-item a:hover {
+    border-bottom-color: var(--accent);
+  }
+  .contact-item svg { color: var(--text-muted); flex-shrink: 0; }
+  .contact-item:has(a) svg { color: var(--accent); opacity: .75; }
 
   /* ===== BODY LAYOUT ===== */
   .body {
+    flex: 1;
     display: grid;
     grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+    min-height: 0;
+    overflow: hidden;
   }
 
   .col-main {
-    padding: 1.8rem 2rem 1.8rem 2.4rem;
+    padding: 1.3rem 1.6rem 1.3rem 2rem;
     border-right: 1px solid var(--border);
+    overflow: hidden;
   }
 
   .col-side {
-    padding: 1.8rem 2rem 1.8rem 1.6rem;
+    padding: 1.3rem 1.6rem 1.3rem 1.4rem;
     background: var(--bg-subtle);
+    overflow: hidden;
   }
 
   /* ===== SECTIONS ===== */
-  .section { margin-bottom: 1.8rem; }
+  .section { margin-bottom: 1.2rem; }
   .section:last-child { margin-bottom: 0; }
 
   .section-title {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 8px;
   }
-
   .section-title::after {
     content: '';
     flex: 1;
@@ -198,50 +211,43 @@
     background: var(--border);
   }
 
-  /* ===== EXPERIENCE ===== */
+  /* ===== EXPÉRIENCES ===== */
   .exp-item {
-    margin-bottom: 1.3rem;
-    padding-bottom: 1.3rem;
+    margin-bottom: 0.95rem;
+    padding-bottom: 0.95rem;
     border-bottom: 1px solid var(--border);
   }
-
   .exp-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-  .exp-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
-
-  .exp-role { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
-
-  .exp-company {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-top: 2px;
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
   }
 
+  .exp-role { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); }
+  .exp-company { font-size: 0.75rem; color: var(--text-secondary); margin-top: 1px; }
+
   .exp-date {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     white-space: nowrap;
     background: var(--tag-bg);
-    padding: 2px 8px;
+    padding: 2px 7px;
     border-radius: 4px;
     flex-shrink: 0;
     font-weight: 500;
-    margin-top: 2px;
   }
 
-  .exp-bullets {
-    list-style: none;
-    margin-top: 8px;
-  }
-
+  .exp-bullets { list-style: none; margin-top: 6px; }
   .exp-bullets li {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
-    line-height: 1.55;
-    padding: 2px 0 2px 14px;
+    line-height: 1.5;
+    padding: 1px 0 1px 13px;
     position: relative;
   }
-
   .exp-bullets li::before {
     content: '›';
     position: absolute;
@@ -250,58 +256,50 @@
     font-weight: 700;
   }
 
-  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
 
   .tag {
-    font-size: 0.7rem;
+    font-size: 0.67rem;
     font-weight: 500;
-    padding: 2px 7px;
+    padding: 2px 6px;
     border-radius: 4px;
     background: var(--tag-bg);
     color: var(--tag-color);
     border: 1px solid var(--border);
   }
-
   .tag.accent {
     background: var(--accent-light);
     color: var(--accent);
     border-color: #c7d7f9;
   }
 
-  /* ===== PROJET ===== */
+  /* ===== PROJETS ===== */
   .proj-item {
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
   }
-
   .proj-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-  .proj-title { font-size: 0.83rem; font-weight: 600; color: var(--text-primary); }
+  .proj-title { font-size: 0.79rem; font-weight: 600; color: var(--text-primary); }
+  .proj-desc { font-size: 0.73rem; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
 
-  .proj-desc {
-    font-size: 0.78rem;
-    color: var(--text-secondary);
-    margin-top: 4px;
-    line-height: 1.55;
-  }
-
-  /* ===== SKILL GROUPS ===== */
-  .skill-group { margin-bottom: 1rem; }
+  /* ===== COMPÉTENCES ===== */
+  .skill-group { margin-bottom: 0.75rem; }
   .skill-group:last-child { margin-bottom: 0; }
 
   .skill-label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
   }
 
-  .skill-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 3px; }
 
   .skill-tag {
-    font-size: 0.7rem;
-    padding: 2px 7px;
+    font-size: 0.67rem;
+    padding: 2px 6px;
     border-radius: 4px;
     background: var(--bg);
     color: var(--text-secondary);
@@ -309,67 +307,42 @@
   }
 
   /* ===== FORMATION ===== */
-  .edu-item { margin-bottom: 0.9rem; }
+  .edu-item { margin-bottom: 0.7rem; }
   .edu-item:last-child { margin-bottom: 0; }
 
-  .edu-diploma { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); }
-
-  .edu-school {
-    font-size: 0.78rem;
-    color: var(--text-secondary);
-    margin-top: 2px;
-  }
-
-  .edu-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 3px;
-  }
+  .edu-diploma { font-size: 0.79rem; font-weight: 600; color: var(--text-primary); }
+  .edu-school  { font-size: 0.73rem; color: var(--text-secondary); margin-top: 1px; }
+  .edu-meta    { display: flex; justify-content: space-between; align-items: center; margin-top: 3px; }
 
   .edu-level {
-    font-size: 0.7rem;
+    font-size: 0.67rem;
     font-weight: 600;
     color: var(--accent);
     background: var(--accent-light);
-    padding: 1px 6px;
+    padding: 1px 5px;
     border-radius: 3px;
   }
-
-  .edu-year { font-size: 0.72rem; color: var(--text-muted); }
+  .edu-year { font-size: 0.69rem; color: var(--text-muted); }
 
   /* ===== SOFT SKILLS ===== */
   .soft-list { display: flex; flex-wrap: wrap; gap: 5px; }
-
   .soft-tag {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 500;
     color: var(--text-secondary);
     background: var(--bg);
     border: 1px solid var(--border);
-    padding: 3px 9px;
+    padding: 3px 8px;
     border-radius: 20px;
   }
 
   /* ===== CERTIF ===== */
-  .certif-item { font-size: 0.8rem; color: var(--text-secondary); }
+  .certif-item { font-size: 0.75rem; color: var(--text-secondary); }
 
   /* ===== VEILLE ===== */
-  .veille-text {
-    font-size: 0.78rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-  }
+  .veille-text { font-size: 0.73rem; color: var(--text-secondary); line-height: 1.55; }
 
-  /* ===== PRINT BUTTON ===== */
-  .toolbar {
-    max-width: var(--page-width);
-    margin: 0 auto 0.8rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-
+  /* ===== BOUTONS ===== */
   .btn {
     font-family: var(--font);
     font-size: 0.8rem;
@@ -385,57 +358,42 @@
     gap: 6px;
     transition: background .15s, border-color .15s;
   }
-
   .btn:hover { background: var(--tag-bg); border-color: #d1d5db; }
-
-  .btn.primary {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-  }
-
+  .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
   .btn.primary:hover { background: #1748c8; }
-
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 640px) {
-    .body { grid-template-columns: 1fr; }
-    .col-main { border-right: none; border-bottom: 1px solid var(--border); }
-    .header-right { align-items: flex-start; }
-    .page { margin: 0; border-radius: 0; }
-  }
 </style>
 </head>
 <body>
 
-<!-- ===== TOOLBAR ===== -->
-<div class="toolbar no-print">
-  <button class="btn" onclick="window.print()">
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="btn primary" onclick="window.print()">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
     Imprimer / PDF
   </button>
 </div>
 
-<!-- ===== PAGE ===== -->
+<!-- PAGE A4 -->
 <div class="page">
 
   <!-- HEADER -->
   <div class="header">
     <div class="header-left">
       <div class="name">Tommy Hautemer</div>
-      <div class="job-title">Administrateur Systèmes, Réseaux & Sécurité</div>
+      <div class="job-title">Administrateur Systèmes, Réseaux &amp; Sécurité</div>
       <div class="tagline">
-        Étudiant Bachelor Cybersécurité en 3e année (École 2600), expérience solide en administration système, réseau et sécurité. Je recherche activement une alternance d'1 an en Blue Teaming, mobile France entière.
+        Étudiant Bachelor Cybersécurité en 3e année (École 2600), expérience solide en administration système, réseau et sécurité. Je recherche activement une alternance d'1 an en Blue Teaming/Administration Systèmes et Réseaux, mobile France entière.
       </div>
       <div class="badge-dispo">Disponible en alternance — Septembre 2026 · 2 sem. école / 4 sem. entreprise</div>
     </div>
     <div class="header-right">
       <div class="contact-item">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-        <a href="mailto:tommy.hautemer@ecole2600.com" target="_blank" rel="noopener noreferrer">tommy.hautemer@ecole2600.com</a>
+        <a href="mailto:tommy.hautemer@ecole2600.com">tommy.hautemer@ecole2600.com</a>
       </div>
       <div class="contact-item">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <a href="tel:+33782796804" target="_blank" rel="noopener noreferrer">07 82 79 68 04</a>
+        <a href="tel:+33782796804">07 82 79 68 04</a>
       </div>
       <div class="contact-item">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -446,8 +404,8 @@
         Anglais C1
       </div>
       <div class="contact-item">
-        <svg width ="13" height="13" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><cirlce cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        <a href="https://www.linkedin.com/in/hautemer-tommy" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/hautemer-tommy</a>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        <a href="https://www.linkedin.com/in/hautemer-tommy" target="_blank" rel="noopener">linkedin.com/in/hautemer-tommy</a>
       </div>
     </div>
   </div>
@@ -458,7 +416,6 @@
     <!-- COLONNE PRINCIPALE -->
     <div class="col-main">
 
-      <!-- EXPÉRIENCES -->
       <div class="section">
         <div class="section-title">Expériences professionnelles</div>
 
@@ -466,12 +423,12 @@
           <div class="exp-header">
             <div>
               <div class="exp-role">Administrateur Systèmes et Réseaux</div>
-              <div class="exp-company">iQanto — Groupe SNEF · France (6 sites) + Slovaquie</div>
+              <div class="exp-company">iQanto — Groupe SNEF · France (6 sites) + Slovaquie (1 site)</div>
             </div>
-            <span class="exp-date">2025 – 2026</span>
+            <span class="exp-date">Octobre 2025 – Mars 2026</span>
           </div>
           <ul class="exp-bullets">
-            <li>Administration système Linux/Windows Server sur 7 sites : AD, GPO, patching, hardening CIS, EDR/XDR, monitoring Zabbix/PRTG, sauvegardes Veeam</li>
+            <li>Administration système Linux/Windows Server sur 7 sites (entre 15 et 100 postes par site) : AD, GPO, patching, hardening CIS, EDR/XDR, monitoring Zabbix/PRTG, sauvegardes Veeam</li>
             <li>Gestion du parc Azure/Intune (MDM), automatisation PowerShell/Python et documentation des procédures</li>
           </ul>
         </div>
@@ -480,9 +437,9 @@
           <div class="exp-header">
             <div>
               <div class="exp-role">Administrateur Système et Réseau</div>
-              <div class="exp-company">Ordre des Experts-Comptables de Paris Île-de-France</div>
+              <div class="exp-company">Ordre des Experts-Comptables de Paris - Île-de-France</div>
             </div>
-            <span class="exp-date">2025</span>
+            <span class="exp-date">Mars 2025 – Juillet 2025</span>
           </div>
           <ul class="exp-bullets">
             <li>Administration AD (~80 postes), GPO, hardening, EDR SentinelOne, FortiGate, supervision Hyper-V et gestion des salles de formation</li>
@@ -495,24 +452,23 @@
           <div class="exp-header">
             <div>
               <div class="exp-role">Alternant Système et Réseau</div>
-              <div class="exp-company">Technoclic · Île-de-France</div>
+              <div class="exp-company">Technoclic · Ris-Orangis - Île-de-France</div>
             </div>
-            <span class="exp-date">2023 – 2025</span>
+            <span class="exp-date">Août 2023 – Février 2025</span>
           </div>
           <ul class="exp-bullets">
             <li>Gestion Windows Server/Linux pour ~100 entreprises (~1 000 postes) : ADDS, GPO, VSphere, WSUS, EDR/XDR, Veeam — ticketing Ninja RMM</li>
             <li>Développement de scripts PowerShell/Python et documentation des configurations</li>
-            
           </ul>
         </div>
 
         <div class="exp-item">
           <div class="exp-header">
             <div>
-              <div class="exp-role">Apprenant Technicien Assistance Informatique</div>
-              <div class="exp-company">Webforce 3 · Île-de-France</div>
+              <div class="exp-role">Stage Système et Réseau</div>
+              <div class="exp-company">Stellantis · Vélizy-Villacoublay - Île-de-France</div>
             </div>
-            <span class="exp-date">2022 – 2023</span>
+            <span class="exp-date">Mai 2023 – Juin 2023</span>
           </div>
           <ul class="exp-bullets">
             <li>Diagnostic/résolution de pannes, configuration équipements, intervention réseau (câblage, switchs, routeurs) et sécurisation des systèmes</li>
@@ -520,7 +476,6 @@
         </div>
       </div>
 
-      <!-- PROJETS -->
       <div class="section">
         <div class="section-title">Projets</div>
 
@@ -559,31 +514,91 @@
         </div>
       </div>
 
+      <div class="section">
+        <div class="section-title">Pentest, Reverse Engineering, AD Security &amp; Forensic</div>
+
+        <div class="skill-group">
+          <div class="skill-label">Reverse Engineering</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Ghidra</span>
+            <span class="skill-tag">Cutter</span>
+            <span class="skill-tag">x64dbg</span>
+            <span class="skill-tag">gdb / pwndbg</span>
+            <span class="skill-tag">ltrace / strace</span>
+            <span class="skill-tag">strings / readelf / objdump</span>
+            <span class="skill-tag">Cheat Engine</span>
+            <span class="skill-tag">ELF / PE / .NET</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-label">Pentest &amp; Audit</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Burp Suite</span>
+            <span class="skill-tag">OWASP ZAP</span>
+            <span class="skill-tag">Metasploit</span>
+            <span class="skill-tag">Nuclei</span>
+            <span class="skill-tag">Nessus / OpenVAS</span>
+            <span class="skill-tag">Gobuster</span>
+            <span class="skill-tag">FFUF</span>
+            <span class="skill-tag">SQLmap</span>
+            <span class="skill-tag">Hydra</span>
+            <span class="skill-tag">Hashcat</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-label">Active Directory Security</div>
+          <div class="skill-tags">
+            <span class="skill-tag">BloodHound</span>
+            <span class="skill-tag">SharpHound</span>
+            <span class="skill-tag">PingCastle</span>
+            <span class="skill-tag">Impacket</span>
+            <span class="skill-tag">NetExec</span>
+            <span class="skill-tag">Responder</span>
+            <span class="skill-tag">Certipy</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-label">Forensic &amp; Analyse</div>
+          <div class="skill-tags">
+            <span class="skill-tag">CyberChef</span>
+            <span class="skill-tag">Volatility</span>
+            <span class="skill-tag">Autopsy</span>
+            <span class="skill-tag">YARA</span>
+            <span class="skill-tag">Sigma</span>
+            <span class="skill-tag">Sysmon</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- COLONNE LATÉRALE -->
     <div class="col-side">
 
-      <!-- COMPÉTENCES -->
       <div class="section">
         <div class="section-title">Compétences</div>
 
         <div class="skill-group">
-          <div class="skill-label">Systèmes & Virtualisation</div>
+          <div class="skill-label">Systèmes &amp; Virtualisation</div>
           <div class="skill-tags">
             <span class="skill-tag">Windows Server 2016/19/22</span>
-            <span class="skill-tag">Linux (Debian, RHEL, Ubuntu)</span>
+            <span class="skill-tag">Linux (Debian, RHEL, Ubuntu, Parrot OS, Kali Linux)</span>
             <span class="skill-tag">Active Directory / ADDS</span>
             <span class="skill-tag">GPO</span>
             <span class="skill-tag">Intune / MDM</span>
             <span class="skill-tag">Hyper-V</span>
-            <span class="skill-tag">VMware / VSphere</span>
+            <span class="skill-tag">VMware / VSphere / VirtualBox</span>
             <span class="skill-tag">Azure Entra ID</span>
+            <span class="skill-tag">Metasploitable</span>
+            <span class="skill-tag">Docker</span>
           </div>
         </div>
 
         <div class="skill-group">
-          <div class="skill-label">Réseau & Infrastructure</div>
+          <div class="skill-label">Réseau &amp; Infrastructure</div>
           <div class="skill-tags">
             <span class="skill-tag">LAN / WAN</span>
             <span class="skill-tag">VLAN</span>
@@ -598,13 +613,13 @@
         </div>
 
         <div class="skill-group">
-          <div class="skill-label">Sécurité & Hardening</div>
+          <div class="skill-label">Sécurité &amp; Hardening</div>
           <div class="skill-tags">
             <span class="skill-tag">CIS Benchmarks</span>
             <span class="skill-tag">STIG</span>
             <span class="skill-tag">AppLocker</span>
             <span class="skill-tag">BitLocker</span>
-            <span class="skill-tag">EDR SentinelOne</span>
+            <span class="skill-tag">SentinelOne</span>
             <span class="skill-tag">Wazuh</span>
             <span class="skill-tag">Defender</span>
             <span class="skill-tag">Analyse de vulnérabilités</span>
@@ -614,7 +629,7 @@
         </div>
 
         <div class="skill-group">
-          <div class="skill-label">Automatisation & Scripting</div>
+          <div class="skill-label">Automatisation &amp; Scripting</div>
           <div class="skill-tags">
             <span class="skill-tag">PowerShell</span>
             <span class="skill-tag">Bash</span>
@@ -623,7 +638,7 @@
         </div>
 
         <div class="skill-group">
-          <div class="skill-label">Monitoring & Outils</div>
+          <div class="skill-label">Monitoring &amp; Outils</div>
           <div class="skill-tags">
             <span class="skill-tag">Zabbix</span>
             <span class="skill-tag">PRTG</span>
@@ -634,18 +649,39 @@
             <span class="skill-tag">Microsoft 365</span>
           </div>
         </div>
+
+        <div class="skill-group">
+          <div class="skill-label">Développement Web</div>
+          <div class="skill-tags">
+            <span class="skill-tag">HTML</span>
+            <span class="skill-tag">CSS</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">Bootstrap</span>
+            <span class="skill-tag">Vue.js</span>
+            <span class="skill-tag">Angular</span>
+            <span class="skill-tag">Merise</span>
+            <span class="skill-tag">SQL</span>
+            <span class="skill-tag">NoSQL</span>
+            <span class="skill-tag">MongoDB</span>
+            <span class="skill-tag">Node.js</span>
+            <span class="skill-tag">Express</span>
+            <span class="skill-tag">PHP</span>
+            <span class="skill-tag">Laravel</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Flask</span>
+          </div>
+        </div>
       </div>
 
-      <!-- FORMATION -->
       <div class="section">
         <div class="section-title">Formation</div>
 
         <div class="edu-item">
           <div class="edu-diploma">Bachelor Cybersécurité (B3)</div>
-          <div class="edu-school">École 2600 — Spécialisation sécurité système, réseau & Blue Team</div>
+          <div class="edu-school">École 2600 — Spécialisation sécurité système, réseau &amp; Blue Team</div>
           <div class="edu-meta">
             <span class="edu-level">RNCP 6</span>
-            <span class="edu-year">2026 - 2027</span>
+            <span class="edu-year">2026 – 2027</span>
           </div>
         </div>
 
@@ -657,8 +693,8 @@
             <span class="edu-year">2023 – 2025</span>
           </div>
         </div>
+      </div>
 
-      <!-- SOFT SKILLS -->
       <div class="section">
         <div class="section-title">Soft skills</div>
         <div class="soft-list">
@@ -667,10 +703,10 @@
           <span class="soft-tag">Esprit d'analyse</span>
           <span class="soft-tag">Documentation</span>
           <span class="soft-tag">Curiosité technique</span>
+          <span class="soft-tag">Connaissance et utilisation de solutions LLM</span>
         </div>
       </div>
 
-      <!-- CERTIFICATION -->
       <div class="section">
         <div class="section-title">Certification</div>
         <div class="certif-item">
@@ -678,11 +714,10 @@
         </div>
       </div>
 
-      <!-- VEILLE -->
       <div class="section">
         <div class="section-title">Veille technique</div>
         <div class="veille-text">
-          Patch Tuesday & CVE critiques Windows/Linux · CIS Benchmarks / STIG · Azure Entra ID, Intune, EDR/XDR · Sources : ANSSI, CERT-FR
+          Patch Tuesday &amp; CVE critiques Windows/Linux · CIS Benchmarks / STIG · Azure Entra ID, Intune, EDR/XDR · Sources : ANSSI, CERT-FR
         </div>
       </div>
 
@@ -690,5 +725,42 @@
   </div>
 
 </div>
+
+<script>
+  (function () {
+    const PAGE_H = 1123;          // 297mm @ 96dpi
+    const page = document.querySelector('.page');
+    const root = document.documentElement;
+    if (!page) return;
+
+    function fit() {
+      let fs = 12;
+      root.style.fontSize = fs + 'px';
+      page.style.overflow = 'visible';
+      page.style.height = 'auto';
+
+      let guard = 0;
+      while (page.scrollHeight > PAGE_H && fs > 8 && guard < 60) {
+        fs = Math.round((fs - 0.1) * 10) / 10;
+        root.style.fontSize = fs + 'px';
+        guard++;
+      }
+
+      while (fs < 13 && guard < 120) {
+        root.style.fontSize = (fs + 0.1) + 'px';
+        page.offsetHeight; // reflow
+        if (page.scrollHeight > PAGE_H) { root.style.fontSize = fs + 'px'; break; }
+        fs = Math.round((fs + 0.1) * 10) / 10;
+        guard++;
+      }
+
+      page.style.overflow = 'hidden';
+      page.style.height = PAGE_H + 'px';
+    }
+
+    window.addEventListener('load', fit);
+    window.addEventListener('beforeprint', fit);
+  })();
+</script>
 </body>
 </html>
