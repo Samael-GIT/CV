@@ -81,6 +81,22 @@
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
+    /* Rétablir le layout 2 colonnes pour l'impression */
+    .body {
+      grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr) !important;
+    }
+    .col-main {
+      border-right: 1px solid var(--border) !important;
+      border-bottom: none !important;
+    }
+    .header {
+      flex-direction: row !important;
+      align-items: flex-start !important;
+    }
+    .header-right {
+      align-items: flex-end !important;
+    }
+    html { font-size: 12px !important; }
   }
 
   /* ===== HEADER ===== */
@@ -361,6 +377,106 @@
   .btn:hover { background: var(--tag-bg); border-color: #d1d5db; }
   .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
   .btn.primary:hover { background: #1748c8; }
+
+  /* =================================================================
+     RESPONSIVE — TABLETTE (≤ 900px)
+     ================================================================= */
+  @media screen and (max-width: 900px) {
+    html { font-size: 13px; }
+
+    body { padding: 0; background: #e2e8f0; }
+
+    .toolbar {
+      width: 100%;
+      padding: 12px 16px;
+      background: #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin-bottom: 0;
+    }
+
+    .page {
+      width: 100%;
+      height: auto;          /* Hauteur naturelle, pas de coupure A4 */
+      border-radius: 0;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    /* Header : empilé verticalement */
+    .header {
+      flex-direction: column;
+      padding: 1.2rem 1.2rem 1rem;
+      gap: 0.9rem;
+    }
+
+    .header-left { min-width: unset; }
+
+    .header-right {
+      align-items: flex-start;  /* Contacts alignés à gauche */
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+    }
+
+    /* Body : 2 colonnes → 1 colonne */
+    .body {
+      grid-template-columns: 1fr;
+      overflow: visible;
+    }
+
+    .col-main {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      overflow: visible;
+      padding: 1.2rem 1.2rem;
+    }
+
+    .col-side {
+      overflow: visible;
+      padding: 1.2rem 1.2rem;
+    }
+
+    .tagline { max-width: 100%; }
+  }
+
+  /* =================================================================
+     RESPONSIVE — MOBILE (≤ 480px)
+     ================================================================= */
+  @media screen and (max-width: 480px) {
+    html { font-size: 14px; }
+
+    .header { padding: 1rem; gap: 0.8rem; }
+
+    .col-main, .col-side { padding: 1rem; }
+
+    .name { font-size: 1.5rem; }
+
+    /* Contacts : icône + texte en pile verticale */
+    .header-right {
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* Date badge sur toute la largeur sous le rôle */
+    .exp-header {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .exp-date { align-self: flex-start; }
+
+    /* Tags plus lisibles */
+    .tag, .skill-tag, .soft-tag {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+    }
+
+    .badge-dispo { font-size: 0.75rem; }
+
+    .toolbar { padding: 10px 12px; }
+  }
 </style>
 </head>
 <body>
@@ -729,11 +845,24 @@
 <script>
   (function () {
     const PAGE_H = 1123;          // 297mm @ 96dpi
+    const DESKTOP_BP = 900;       // breakpoint tablette/desktop
     const page = document.querySelector('.page');
     const root = document.documentElement;
     if (!page) return;
 
+    function isDesktop() {
+      return window.innerWidth > DESKTOP_BP;
+    }
+
     function fit() {
+      // Sur mobile/tablette : pas de contrainte de hauteur → on laisse le contenu respirer
+      if (!isDesktop()) {
+        root.style.fontSize = '';
+        page.style.overflow = 'visible';
+        page.style.height = 'auto';
+        return;
+      }
+
       let fs = 12;
       root.style.fontSize = fs + 'px';
       page.style.overflow = 'visible';
@@ -759,7 +888,14 @@
     }
 
     window.addEventListener('load', fit);
-    window.addEventListener('beforeprint', fit);
+    window.addEventListener('resize', fit);
+    window.addEventListener('beforeprint', () => {
+      // Toujours appliquer le fit A4 à l'impression, même depuis mobile
+      root.style.fontSize = '12px';
+      page.style.overflow = 'hidden';
+      page.style.height = PAGE_H + 'px';
+    });
+    window.addEventListener('afterprint', fit);
   })();
 </script>
 </body>
