@@ -66,28 +66,44 @@
   }
 
   @media print {
+    html {
+      width: 210mm !important;
+      height: 297mm !important;
+      max-height: 297mm !important;
+      overflow: hidden !important;
+    }
     html, body {
       background: white;
       padding: 0;
       margin: 0;
       display: block;
+      width: 210mm !important;
+      height: 297mm !important;
+      max-height: 297mm !important;
+      overflow: hidden !important;
     }
     .toolbar { display: none !important; }
     .page {
       width: 210mm;
-      height: 297mm;
+      max-height: 297mm;
       box-shadow: none;
       border-radius: 0;
+      overflow: hidden !important;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
     /* Rétablir le layout 2 colonnes pour l'impression */
     .body {
       grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr) !important;
+      overflow: hidden !important;
     }
     .col-main {
       border-right: 1px solid var(--border) !important;
       border-bottom: none !important;
+      overflow: hidden !important;
+    }
+    .col-side {
+      overflow: hidden !important;
     }
     .header {
       flex-direction: row !important;
@@ -96,7 +112,6 @@
     .header-right {
       align-items: flex-end !important;
     }
-    html { font-size: 12px !important; }
   }
 
   /* ===== HEADER ===== */
@@ -844,58 +859,137 @@
 
 <script>
   (function () {
-    const PAGE_H = 1123;          // 297mm @ 96dpi
-    const DESKTOP_BP = 900;       // breakpoint tablette/desktop
-    const page = document.querySelector('.page');
-    const root = document.documentElement;
+
+    const PAGE_H     = 1122; 
+    const DESKTOP_BP = 900;
+    const A4_W_PX    = 794;  
+
+    const page    = document.querySelector('.page');
+    const root    = document.documentElement;
     if (!page) return;
 
-    function isDesktop() {
-      return window.innerWidth > DESKTOP_BP;
+    const elBody    = document.querySelector('.body');
+    const elHeader  = document.querySelector('.header');
+    const elHeaderR = document.querySelector('.header-right');
+    const elColMain = document.querySelector('.col-main');
+    const elColSide = document.querySelector('.col-side');
+
+    let printing = false;
+
+
+    function isDesktop() { return window.innerWidth > DESKTOP_BP; }
+    function reflow()    { void page.offsetHeight; }
+
+    function applyPrintLayout() {
+      page.style.cssText = 'width:' + A4_W_PX + 'px;overflow:visible;height:auto;';
+
+      if (elBody) {
+        elBody.style.gridTemplateColumns = 'minmax(0,1.85fr) minmax(0,1fr)';
+        elBody.style.overflow = 'visible';
+        elBody.style.minHeight = '0';
+      }
+      if (elHeader) {
+        elHeader.style.flexDirection = 'row';
+        elHeader.style.alignItems   = 'flex-start';
+      }
+      if (elHeaderR) {
+        elHeaderR.style.flexDirection = 'column';
+        elHeaderR.style.alignItems   = 'flex-end';
+      }
+      if (elColMain) {
+        elColMain.style.borderRight  = '1px solid #e5e7eb';
+        elColMain.style.borderBottom = 'none';
+        elColMain.style.overflow     = 'visible';
+      }
+      if (elColSide) {
+        elColSide.style.overflow = 'visible';
+      }
+      reflow();
+    }
+
+    function clearPrintLayout() {
+      page.style.cssText = '';
+      if (elBody)    { elBody.style.gridTemplateColumns = ''; elBody.style.overflow = ''; elBody.style.minHeight = ''; }
+      if (elHeader)  { elHeader.style.flexDirection = ''; elHeader.style.alignItems = ''; }
+      if (elHeaderR) { elHeaderR.style.flexDirection = ''; elHeaderR.style.alignItems = ''; }
+      if (elColMain) { elColMain.style.borderRight = ''; elColMain.style.borderBottom = ''; elColMain.style.overflow = ''; }
+      if (elColSide) { elColSide.style.overflow = ''; }
+    }
+
+    function binaryFit(lo, hi) {
+      let best = lo;
+      for (let i = 0; i < 25; i++) {
+        const mid = (lo + hi) / 2;
+        root.style.fontSize = mid + 'px';
+        reflow();
+        if (page.scrollHeight <= PAGE_H) {
+          best = mid;
+          lo   = mid;
+        } else {
+          hi = mid;
+        }
+        if (hi - lo < 0.04) break;
+      }
+      root.style.fontSize = best + 'px';
+      reflow();
+      return best;
     }
 
     function fit() {
-      // Sur mobile/tablette : pas de contrainte de hauteur → on laisse le contenu respirer
+      if (printing) return;
+      clearPrintLayout();
+
       if (!isDesktop()) {
         root.style.fontSize = '';
+        page.style.height   = 'auto';
         page.style.overflow = 'visible';
-        page.style.height = 'auto';
         return;
       }
 
-      let fs = 12;
-      root.style.fontSize = fs + 'px';
       page.style.overflow = 'visible';
-      page.style.height = 'auto';
+      page.style.height   = 'auto';
+      reflow();
 
-      let guard = 0;
-      while (page.scrollHeight > PAGE_H && fs > 8 && guard < 60) {
-        fs = Math.round((fs - 0.1) * 10) / 10;
-        root.style.fontSize = fs + 'px';
-        guard++;
-      }
-
-      while (fs < 13 && guard < 120) {
-        root.style.fontSize = (fs + 0.1) + 'px';
-        page.offsetHeight; // reflow
-        if (page.scrollHeight > PAGE_H) { root.style.fontSize = fs + 'px'; break; }
-        fs = Math.round((fs + 0.1) * 10) / 10;
-        guard++;
-      }
+      binaryFit(8, 12);
 
       page.style.overflow = 'hidden';
-      page.style.height = PAGE_H + 'px';
+      page.style.height   = PAGE_H + 'px';
     }
 
-    window.addEventListener('load', fit);
-    window.addEventListener('resize', fit);
-    window.addEventListener('beforeprint', () => {
-      // Toujours appliquer le fit A4 à l'impression, même depuis mobile
-      root.style.fontSize = '12px';
+    function fitForPrint() {
+      applyPrintLayout();
+      binaryFit(7, 14);
       page.style.overflow = 'hidden';
-      page.style.height = PAGE_H + 'px';
+      page.style.height   = PAGE_H + 'px';
+      reflow();
+    }
+
+
+    let restoreDone = false;
+
+    function restoreScreen() {
+      if (restoreDone) return;
+      restoreDone = true;
+      printing    = false;
+      fit();
+    }
+
+    window.addEventListener('load',   fit);
+    window.addEventListener('resize', fit);
+
+    window.addEventListener('beforeprint', () => {
+      printing    = true;
+      restoreDone = false;
+      fitForPrint();
     });
-    window.addEventListener('afterprint', fit);
+
+    window.addEventListener('afterprint', restoreScreen);
+
+    if (window.matchMedia) {
+      window.matchMedia('print').addEventListener('change', function (mq) {
+        if (!mq.matches) restoreScreen();
+      });
+    }
   })();
 </script>
 </body>
